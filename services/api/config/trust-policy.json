@@ -1,0 +1,134 @@
+{
+  "version": "1.0.0",
+  "crawler": {
+    "user_agent": "CheryEU-Compliance-Bot/1.0 (Internal Research; contact: compliance@chery.de)",
+    "robots_txt_enforced": true,
+    "deny_on_captcha_or_anti_bot": true,
+    "canonicalize": {
+      "strip_utm_params": true,
+      "normalize_trailing_slash": true
+    },
+    "rate_limit": {
+      "per_domain_rps": 0.2,
+      "burst": 2
+    }
+  },
+  "monitoring_stages": [
+    "Drafting",
+    "Official",
+    "Comitology",
+    "Interpreting",
+    "Use&Registration"
+  ],
+  "tiers": {
+    "TIER_A_BINDING": {
+      "description": "Binding laws and regulations (hard law).",
+      "allow_auto_merge": true,
+      "route": "main",
+      "domains": [
+        "eur-lex.europa.eu",
+        "op.europa.eu",
+        "unece.org",
+        "gesetze-im-internet.de",
+        "legifrance.gouv.fr",
+        "legislation.gov.uk"
+      ]
+    },
+    "TIER_B_OFFICIAL_SIGNAL": {
+      "description": "Official signals and pre-legislative guidance.",
+      "allow_auto_merge": false,
+      "route": "review_queue",
+      "domains": [
+        "kba.de",
+        "utac.com",
+        "rdw.nl",
+        "vca.gov.uk",
+        "idiada.com",
+        "edpb.europa.eu",
+        "bfdi.bund.de",
+        "bsi.bund.de",
+        "cnil.fr",
+        "enisa.europa.eu",
+        "wiki.unece.org",
+        "ec.europa.eu",
+        "commission.europa.eu",
+        "www.gov.uk"
+      ]
+    },
+    "TIER_C_SOFT_REQ": {
+      "description": "Soft requirements and standards.",
+      "allow_auto_merge": false,
+      "route": "review_queue"
+    },
+    "TIER_D_QUARANTINE": {
+      "description": "Intelligence sources (always quarantine).",
+      "allow_auto_merge": false,
+      "route": "review_queue"
+    }
+  },
+  "profiles": [
+    {
+      "id": "ec_commission_news",
+      "connector": "eu_news",
+      "domain": "commission.europa.eu",
+      "path": "/news-and-media/news_en",
+      "tier": "TIER_B_OFFICIAL_SIGNAL",
+      "stage": "Drafting",
+      "requires_review": true
+    },
+    {
+      "id": "futurium_ai_alliance_news",
+      "connector": "eu_news",
+      "domain": "futurium.ec.europa.eu",
+      "path": "/en/apply-ai-alliance/news",
+      "tier": "TIER_B_OFFICIAL_SIGNAL",
+      "stage": "Drafting",
+      "requires_review": true
+    },
+    {
+      "id": "eu_digital_strategy_news",
+      "connector": "eu_news",
+      "domain": "digital-strategy.ec.europa.eu",
+      "path": "/en/news",
+      "required_query_params": {
+        "topic": ["119"]
+      },
+      "tier": "TIER_B_OFFICIAL_SIGNAL",
+      "stage": "Drafting",
+      "requires_review": true
+    },
+    {
+      "id": "eu_ai_office_news",
+      "connector": "eu_news",
+      "domain": "digital-strategy.ec.europa.eu",
+      "path": "/en/policies/ai-office",
+      "tier": "TIER_B_OFFICIAL_SIGNAL",
+      "stage": "Interpreting",
+      "requires_review": true
+    },
+    {
+      "id": "gar_wp29_weekly_docs",
+      "connector": "globalautoregs",
+      "domain": "globalautoregs.com",
+      "path": "/documents",
+      "required_query_params": {
+        "show": ["week"]
+      },
+      "tier": "TIER_B_OFFICIAL_SIGNAL",
+      "stage": "Drafting",
+      "requires_review": true
+    },
+    {
+      "id": "gar_entry_into_force_2026",
+      "connector": "globalautoregs",
+      "domain": "globalautoregs.com",
+      "path": "/modifications",
+      "required_query_params": {
+        "year": ["2026"]
+      },
+      "tier": "TIER_B_OFFICIAL_SIGNAL",
+      "stage": "Use&Registration",
+      "requires_review": true
+    }
+  ]
+}
