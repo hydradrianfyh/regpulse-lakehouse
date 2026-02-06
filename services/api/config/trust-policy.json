@@ -1,0 +1,269 @@
+{
+  "version": "1.0.0",
+  "crawler": {
+    "user_agent": "CheryEU-Compliance-Bot/1.0 (Internal Research; contact: compliance@chery.de)",
+    "robots_txt_enforced": true,
+    "deny_on_captcha_or_anti_bot": true,
+    "canonicalize": {
+      "strip_utm_params": true,
+      "normalize_trailing_slash": true
+    },
+    "rate_limit": {
+      "per_domain_rps": 0.2,
+      "burst": 2
+    }
+  },
+  "monitoring_stages": [
+    "Drafting",
+    "Official",
+    "Comitology",
+    "Interpreting",
+    "Use&Registration"
+  ],
+  "tiers": {
+    "TIER_A_BINDING": {
+      "description": "Binding laws and regulations (hard law).",
+      "allow_auto_extract": true,
+      "allow_write_main": true,
+      "route": "main",
+      "domains": [
+        "eur-lex.europa.eu",
+        "op.europa.eu",
+        "publications.europa.eu",
+        "unece.org",
+        "gesetze-im-internet.de",
+        "legifrance.gouv.fr",
+        "legislation.gov.uk"
+      ]
+    },
+    "TIER_B_OFFICIAL_SIGNAL": {
+      "description": "Official signals and pre-legislative guidance.",
+      "allow_auto_extract": true,
+      "allow_write_main": false,
+      "route": "review_queue",
+      "domains": [
+        "kba.de",
+        "utac.com",
+        "rdw.nl",
+        "vca.gov.uk",
+        "idiada.com",
+        "edpb.europa.eu",
+        "edps.europa.eu",
+        "ico.org.uk",
+        "bfdi.bund.de",
+        "bsi.bund.de",
+        "cnil.fr",
+        "enisa.europa.eu",
+        "wiki.unece.org",
+        "ec.europa.eu",
+        "commission.europa.eu",
+        "futurium.ec.europa.eu",
+        "digital-strategy.ec.europa.eu",
+        "globalautoregs.com",
+        "www.gov.uk"
+      ]
+    },
+    "TIER_C_SOFT_REQ": {
+      "description": "Soft requirements and standards.",
+      "allow_auto_extract": true,
+      "allow_write_main": false,
+      "route": "review_queue",
+      "domains": [
+        "euroncap.com",
+        "iso.org",
+        "din.de",
+        "vda.de",
+        "enx.com"
+      ]
+    },
+    "TIER_D_QUARANTINE": {
+      "description": "Intelligence sources (always quarantine).",
+      "allow_auto_extract": true,
+      "allow_write_main": false,
+      "route": "review_queue",
+      "domains": [
+        "iapp.org",
+        "euractiv.com",
+        "globalprivacyblog.com",
+        "blogs.dlapiper.com"
+      ]
+    }
+  },
+  "profiles": [
+    {
+      "id": "eur_lex_oj_daily",
+      "connector": "generic_list",
+      "domain": "eur-lex.europa.eu",
+      "path": "/oj/direct-access.html",
+      "allowed_paths": ["/oj/direct-access.html", "/oj/", "/eli/", "/legal-content/"],
+      "parsing_rule": "html_list_follow_links",
+      "tier": "TIER_A_BINDING",
+      "stage": "Official",
+      "requires_review": false
+    },
+    {
+      "id": "unece_wp29",
+      "connector": "generic_list",
+      "domain": "unece.org",
+      "path": "/transport/vehicle-regulations",
+      "allowed_paths": ["/transport/vehicle-regulations", "/fileadmin/", "/sites/default/files/"],
+      "parsing_rule": "html_list_follow_links",
+      "tier": "TIER_A_BINDING",
+      "stage": "Official",
+      "requires_review": false
+    },
+    {
+      "id": "ec_commission_news",
+      "connector": "eu_news",
+      "domain": "commission.europa.eu",
+      "path": "/news-and-media/news_en",
+      "tier": "TIER_B_OFFICIAL_SIGNAL",
+      "stage": "Drafting",
+      "requires_review": true
+    },
+    {
+      "id": "futurium_ai_alliance_news",
+      "connector": "eu_news",
+      "domain": "futurium.ec.europa.eu",
+      "path": "/en/apply-ai-alliance/news",
+      "tier": "TIER_B_OFFICIAL_SIGNAL",
+      "stage": "Drafting",
+      "requires_review": true
+    },
+    {
+      "id": "eu_digital_strategy_news",
+      "connector": "eu_news",
+      "domain": "digital-strategy.ec.europa.eu",
+      "path": "/en/news",
+      "required_query_params": {
+        "topic": ["119"]
+      },
+      "tier": "TIER_B_OFFICIAL_SIGNAL",
+      "stage": "Drafting",
+      "requires_review": true
+    },
+    {
+      "id": "eu_ai_office_news",
+      "connector": "eu_news",
+      "domain": "digital-strategy.ec.europa.eu",
+      "path": "/en/policies/ai-office",
+      "tier": "TIER_B_OFFICIAL_SIGNAL",
+      "stage": "Interpreting",
+      "requires_review": true
+    },
+    {
+      "id": "gar_wp29_weekly_docs",
+      "connector": "globalautoregs",
+      "domain": "globalautoregs.com",
+      "path": "/documents",
+      "required_query_params": {
+        "show": ["week"]
+      },
+      "tier": "TIER_B_OFFICIAL_SIGNAL",
+      "stage": "Drafting",
+      "requires_review": true
+    },
+    {
+      "id": "gar_entry_into_force_2026",
+      "connector": "globalautoregs",
+      "domain": "globalautoregs.com",
+      "path": "/modifications",
+      "required_query_params": {
+        "year": ["2026"]
+      },
+      "tier": "TIER_A_BINDING",
+      "stage": "Use&Registration",
+      "requires_review": false
+    },
+    {
+      "id": "gar_entry_into_force_2025",
+      "connector": "globalautoregs",
+      "domain": "globalautoregs.com",
+      "path": "/modifications",
+      "required_query_params": {
+        "year": ["2025"]
+      },
+      "tier": "TIER_A_BINDING",
+      "stage": "Use&Registration",
+      "requires_review": false
+    },
+    {
+      "id": "gar_entry_into_force_2024",
+      "connector": "globalautoregs",
+      "domain": "globalautoregs.com",
+      "path": "/modifications",
+      "required_query_params": {
+        "year": ["2024"]
+      },
+      "tier": "TIER_A_BINDING",
+      "stage": "Use&Registration",
+      "requires_review": false
+    },
+    {
+      "id": "euro_ncap_soft",
+      "connector": "generic_list",
+      "domain": "euroncap.com",
+      "path": "/en/for-engineers",
+      "allowed_paths": ["/en/for-engineers", "/en/vehicle-safety", "/en/ratings-rewards"],
+      "parsing_rule": "metadata_only",
+      "tier": "TIER_C_SOFT_REQ",
+      "stage": "Interpreting",
+      "requires_review": true
+    },
+    {
+      "id": "iso_obp_catalog",
+      "connector": "generic_list",
+      "domain": "iso.org",
+      "path": "/obp/",
+      "allowed_paths": ["/obp/"],
+      "parsing_rule": "metadata_only",
+      "tier": "TIER_C_SOFT_REQ",
+      "stage": "Interpreting",
+      "requires_review": true
+    },
+    {
+      "id": "vda_soft",
+      "connector": "generic_list",
+      "domain": "vda.de",
+      "path": "/en",
+      "allowed_paths": ["/en", "/de"],
+      "parsing_rule": "metadata_only",
+      "tier": "TIER_C_SOFT_REQ",
+      "stage": "Interpreting",
+      "requires_review": true
+    },
+    {
+      "id": "iapp_news",
+      "connector": "generic_list",
+      "domain": "iapp.org",
+      "path": "/news",
+      "allowed_paths": ["/news"],
+      "parsing_rule": "summary_only",
+      "tier": "TIER_D_QUARANTINE",
+      "stage": "Drafting",
+      "requires_review": true
+    },
+    {
+      "id": "euractiv_news",
+      "connector": "generic_list",
+      "domain": "euractiv.com",
+      "path": "/",
+      "allowed_paths": ["/", "/topics"],
+      "parsing_rule": "summary_only",
+      "tier": "TIER_D_QUARANTINE",
+      "stage": "Drafting",
+      "requires_review": true
+    },
+    {
+      "id": "dla_privacy_blog",
+      "connector": "generic_list",
+      "domain": "blogs.dlapiper.com",
+      "path": "/privacymatters",
+      "allowed_paths": ["/privacymatters"],
+      "parsing_rule": "summary_only",
+      "tier": "TIER_D_QUARANTINE",
+      "stage": "Drafting",
+      "requires_review": true
+    }
+  ]
+}

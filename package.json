@@ -1,0 +1,20 @@
+{
+  "name": "regpulse-lakehouse-demo",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm -w apps/web run dev",
+    "dev:all": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/dev-all.ps1",
+    "dev:api": "npm -w services/api run dev",
+    "dev:worker": "npm -w services/api run dev:worker",
+    "build": "npm -w apps/web run build",
+    "build:api": "npm -w services/api run build",
+    "lint": "npm -w apps/web run lint --if-present && npm -w services/api run lint --if-present",
+    "migrate": "npm -w services/api run migrate",
+    "seed": "npm -w services/api run seed"
+  }
+}
